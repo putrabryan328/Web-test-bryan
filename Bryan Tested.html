@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bryan | Interactive Portfolio</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0d0d12;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background Glow */
+        .glow-bg {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulse 6s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
+        }
+
+        /* App Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        /* HOOK PAGE (Tampilan Awal) */
+        #welcome-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .click-hint {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fadeIn 2s ease-in-out infinite alternate;
+        }
+
+        /* Tombol Nama Bryan Interaktif */
+        .brand-name {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 10px 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-name:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: #6366f1;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+            color: #6366f1;
+        }
+
+        .brand-name:active {
+            transform: scale(0.95);
+        }
+
+        /* PROFILE PAGE (Tampilan Data Diri) */
+        #profile-page {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-card {
+            background: rgba(22, 22, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 35px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .avatar-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .profile-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-card p.subtitle {
+            color: #a1a1aa;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        /* List Data Diri */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 16px 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateX(5px);
+        }
+
+        .info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-left i {
+            color: #6366f1;
+            font-size: 1.2rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #e4e4e7;
+        }
+
+        .info-value {
+            color: #a1a1aa;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+
+        /* Animasi Efek Klik pada Card */
+        .info-item.clicked {
+            animation: pulseClick 0.5s ease-out;
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        @keyframes pulseClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        /* Floating Badge Feedback */
+        .click-badge {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #a855f7;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .info-item.clicked .click-badge {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Tombol Kembali */
+        .btn-back {
+            margin-top: 25px;
+            background: transparent;
+            border: none;
+            color: #71717a;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-bg"></div>
+
+    <div class="container">
+        
+        <!-- HALAMAN AWAL (SEBELUM DIKLIK) -->
+        <div id="welcome-page">
+            <div class="click-hint">Klik nama di bawah</div>
+            <div class="brand-name" onclick="showProfile()">
+                BRYAN
+            </div>
+        </div>
+
+        <!-- HALAMAN DATA DIRI (SETELAH BRYAN DIKLIK) -->
+        <div id="profile-page">
+            <div class="profile-card">
+                <div class="avatar-box">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <h2>Bryan</h2>
+                <p class="subtitle">Sentuh item di bawah untuk melihat efek animasi</p>
+
+                <div class="info-list">
+                    
+                    <!-- Item 1: Umur -->
+                    <div class="info-item" onclick="animateCard(this)">
+                        <div class="info-left">
+                            <i class="fa-solid fa-cake-candles"></i>
+                            <span class="info-label">Umur</span>
+                        </div>
+                        <span class="info-value">xx Tahun</span>
+                        <span class="click-badge">Tercatat!</span>
+                    </div>
+
+                    <!-- Item 2: Alamat -->
+                    <div class="info-item" onclick="animateCard(this)">
+                        <div class="info-left">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span class="info-label">Alamat</span>
+                        </div>
+                        <span class="info-value">xx</span>
+                        <span class="click-badge">Tercatat!</span>
+                    </div>
+
+                    <!-- Item 3: Pekerjaan -->
+                    <div class="info-item" onclick="animateCard(this)">
+                        <div class="info-left">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span class="info-label">Pekerjaan</span>
+                        </div>
+                        <span class="info-value">xx</span>
+                        <span class="click-badge">Tercatat!</span>
+                    </div>
+
+                </div>
+
+                <button class="btn-back" onclick="hideProfile()">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fungsi Membuka Data Diri
+        function showProfile() {
+            const welcomePage = document.getElementById('welcome-page');
+            const profilePage = document.getElementById('profile-page');
+
+            welcomePage.style.opacity = '0';
+            welcomePage.style.transform = 'translateY(-20px)';
+
+            setTimeout(() => {
+                welcomePage.style.display = 'none';
+                profilePage.style.display = 'block';
+                
+                // Trigger animasi fade-in
+                setTimeout(() => {
+                    profilePage.style.opacity = '1';
+                    profilePage.style.transform = 'translateY(0)';
+                }, 50);
+            }, 400);
+        }
+
+        // Fungsi Kembali ke Halaman Depan
+        function hideProfile() {
+            const welcomePage = document.getElementById('welcome-page');
+            const profilePage = document.getElementById('profile-page');
+
+            profilePage.style.opacity = '0';
+            profilePage.style.transform = 'translateY(30px)';
+
+            setTimeout(() => {
+                profilePage.style.display = 'none';
+                welcomePage.style.display = 'flex';
+                
+                setTimeout(() => {
+                    welcomePage.style.opacity = '1';
+                    welcomePage.style.transform = 'translateY(0)';
+                }, 50);
+            }, 400);
+        }
+
+        // Fungsi Animasi Saat Data Diri Diklik
+        function animateCard(element) {
+            // Hapus class animasi sebelumnya jika ada
+            element.classList.remove('clicked');
+            
+            // Re-trigger animasi reflow
+            void element.offsetWidth;
+            
+            // Tambahkan class animasi baru
+            element.classList.add('clicked');
+
+            // Hapus highlight badge secara otomatis setelah 1.2 detik
+            setTimeout(() => {
+                element.classList.remove('clicked');
+            }, 1200);
+        }
+    </script>
+
+</body>
+</html>
